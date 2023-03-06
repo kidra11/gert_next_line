@@ -6,13 +6,13 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:42:39 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/04 19:31:57 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/06 19:23:38 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strlen(char s)
+int	ft_strlen(char *s)
 {
 	size_t	i;
 
@@ -30,7 +30,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		k;
 
 	if (!s1)
-		return (s2);
+		return (ft_strdup(s2));
 	else if (!s2)
 		return ((char *)s1);
 	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
@@ -41,29 +41,11 @@ char	*ft_strjoin(char *s1, char *s2)
 	k = 0;
 	while (s1[i])
 		str[l++] = s1[i++];
+	free(s1);
 	while (s2[k])
 		str[l++] = s2[k++];
 	str[l] = '\0';
 	return (str);
-}
-
-char	*copy_line(char *stat)
-{
-	char *line;
-	int	i;
-
-	if...
-		...
-	...
-	line = (char *) malloc(sizeof(char) * find_end(stat) + 2);
-        if (!line)
-                return (NULL);
-        i = -1;
-        while (stat[++i] != '\n' && stat[i])
-                line[i] = stat[i];
-        line[i] = '\n';
-        line[i++] = '\0';
-	return (line);
 }
 
 int	find_end(char *stat)
@@ -81,10 +63,29 @@ int	find_end(char *stat)
 	return (0);
 }
 
+char	*copy_line(char *stat)
+{
+	char	*line;
+	int		i;
+
+	if (!stat)
+		return (NULL);
+	line = (char *) malloc(sizeof(char) * find_end(stat) + 2);
+	if (!line)
+		return (NULL);
+	i = -1;
+	while (stat[++i] != '\n' && stat[i])
+		line[i] = stat[i];
+	line[i] = '\n';
+	line[i++] = '\0';
+	printf ("line = %s\n", line);
+	return (line);
+}
+
 char	*get_next_line(int fd)
 {
 	ssize_t		stock;
-	static char	*next;
+	static char	*next = NULL;
 	char		*stat;
 	char		*line;
 	char		*buf;
@@ -92,10 +93,7 @@ char	*get_next_line(int fd)
 	buf = (char *) malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!buf)
 		return (NULL);
-	stat = (char *) malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (!stat)
-		return (NULL);
-	if (next)
+	if (next)	
 		stat = ft_strjoin(next, stat);
 	while (find_end(stat) > 0 || stock > 0)
 	{		
@@ -116,7 +114,7 @@ char	*get_next_line(int fd)
 	free(stat);
 	return (line);
 }
-/*
+
 #include <stdio.h>
 int	main()
 {
@@ -133,7 +131,7 @@ int	main()
 	}
 	return (0);
 }
-
+/*
 test :
 salut\n
 je suis un poulet\n
