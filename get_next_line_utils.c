@@ -6,11 +6,21 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:43:47 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/06 18:40:35 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/07 15:55:55 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+int	ft_strlen(char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
 
 char	*ft_strdup(const char *s)
 {

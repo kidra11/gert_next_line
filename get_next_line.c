@@ -6,21 +6,11 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:42:39 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/06 19:23:38 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/07 18:40:33 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-int	ft_strlen(char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -32,7 +22,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!s1)
 		return (ft_strdup(s2));
 	else if (!s2)
-		return ((char *)s1);
+		return (s1);
 	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
@@ -41,10 +31,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	k = 0;
 	while (s1[i])
 		str[l++] = s1[i++];
-	free(s1);
 	while (s2[k])
 		str[l++] = s2[k++];
 	str[l] = '\0';
+	//free(s1);
 	return (str);
 }
 
@@ -53,12 +43,14 @@ int	find_end(char *stat)
 	int	i;
 
 	i = 0;
+	if (!stat)
+		return (1);
 	while (stat[i])
 	{
 		if (stat[i] != '\n')
 			i++;
 		else
-			return (i);
+			return (1);
 	}
 	return (0);
 }
@@ -78,7 +70,7 @@ char	*copy_line(char *stat)
 		line[i] = stat[i];
 	line[i] = '\n';
 	line[i++] = '\0';
-	printf ("line = %s\n", line);
+	//printf ("line = %s\n", line);
 	return (line);
 }
 
@@ -93,15 +85,19 @@ char	*get_next_line(int fd)
 	buf = (char *) malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!buf)
 		return (NULL);
-	if (next)	
+	if (next)
+	{
 		stat = ft_strjoin(next, stat);
-	while (find_end(stat) > 0 || stock > 0)
+		free(next);
+	}
+	stock = 1;
+	while (find_end(stat) == 0 && stock > 0)
 	{		
 		stock = read(fd, buf, BUFFER_SIZE);
 		buf[stock] = '\0';
 		stat = ft_strjoin(stat, buf);
 	}
-	printf("buf = %s\n", buf);
+	//printf("buf = %s\n", buf);
 	free(buf);
 	line = copy_line(stat);
 	stock = ft_strlen(line);
@@ -111,7 +107,6 @@ char	*get_next_line(int fd)
 	stock = -1;
 	while (stat[++stock])
 		next[stock] = stat[ft_strlen(line) + stock];
-	free(stat);
 	return (line);
 }
 
@@ -120,14 +115,16 @@ int	main()
 {
 	int	fd;
 	char	*str;
+	int	i = 0;
 
 	fd = open("text", O_RDONLY);
 	str = get_next_line(fd);
-	while (str)
+	while (str && i < 4)
 	{
 		printf("main = %s", str);
 		free(str);
 		str = get_next_line(fd);
+		i++;
 	}
 	return (0);
 }
