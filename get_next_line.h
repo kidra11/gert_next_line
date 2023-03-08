@@ -6,7 +6,7 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:45:14 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/06 18:55:45 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/08 17:24:14 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <stdlib.h>
 
 char	*get_next_line(int fd);
-char	*ft_strdup(const char *s);
+char	*ft_strdup(char *s);
 char	*ft_strjoin(char *s1, char *s2);
 char	*copy_line(char *stat);
 int		find_end(char *stat);
