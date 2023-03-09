@@ -6,7 +6,7 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:42:39 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/08 19:57:35 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/09 16:38:52 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,25 +61,23 @@ char	*copy_line(char *stat)
 {
 	char	*line;
 	int		i;
+	int		stock;
 
 	if (!stat)
 		return (NULL);
-	line = (char *) malloc(sizeof(char) * find_end(stat) + 1);
+	i = 0;
+	while (stat[i] && stat[i] != '\n')
+                i++;	
+	printf ("in%d\n", i);
+	line = (char *) malloc(sizeof(char) * i + 2);
 	if (!line)
 		return (NULL);
-	i = 0;
-	while (stat[i] != '\n' && stat[i])
-	{
+	i = -1;
+	while (stat[++i] != '\n' && stat[i])
 		line[i] = stat[i];
-		i++;
-	}
 	if (stat[i] == '\n')
-	{
-		line[i] = stat[i];
-		i++;
-	}
+		line[i++] ='\n';
 	line[i] = '\0';
-	//printf ("line = %s\n", line);
 	return (line);
 }
 
@@ -92,14 +90,19 @@ char	*get_next_line(int fd)
 	char		*buf;
 
 	stat = NULL;
+//	printf("next firts= %s\n", next);
 	if (next)
 	{
 //		printf("enter next\n");
 		stat = ft_strdup(next);
+		free(next);
+		next = NULL;
 	}
-	free(next);
-	next = NULL;
-	if (!next)
+//	else
+//		printf("next else\n");
+//	if (!*next)
+//		printf("next coquille");
+//	if (!next)
 //		printf("next pas de coquille\n");
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
@@ -107,28 +110,33 @@ char	*get_next_line(int fd)
 	stock = 1;
 	while (find_end(stat) == 0 && stock > 0)
 	{
-//		printf("enter while\n");
 		stock = read(fd, buf, BUFFER_SIZE);
 		buf[stock] = '\0';
-//		printf("buf = %s\n", buf);
 		stat = ft_strjoin(stat, buf);
-//		printf("stat = %s\n", stat);
 	}
-//	printf("out while\n");
 	free(buf);
 	buf = NULL;
-	if (!buf)
-//		printf("buf pas de coquille\n");
 	line = copy_line(stat);
-//	printf("line = %s\n", line);
+	printf("line = %s\n", line);
 	stock = ft_strlen(line);
 	next = (char *) malloc(sizeof(char) * (ft_strlen(stat) - stock) + 1);
 	if (!next)
 		return (NULL);
+//	if (next)
+//		printf("next malloc\n");
 	stock = -1;
 	while (stat[++stock])
 		next[stock] = stat[ft_strlen(line) + stock];
-	printf("next = %s\n", next);
+//	printf("next taille = %d\n", ft_strlen(next));
+	if (ft_strlen(next) == 0 && next)
+	{
+//		printf("if coquille\n");
+		free(next);
+		next = NULL;
+	}
+//	if (!next)
+//		printf("next supp\n");
+//	printf("next = %d\n", ft_strlen(next));
 	return (line);
 }
 
@@ -139,6 +147,7 @@ int	main()
 	char	*str;
 	int	i = 0;
 
+	printf("debut\n");
 	fd = open("text", O_RDONLY);
 	str = get_next_line(fd);
 	while (str && i < 10)
@@ -148,6 +157,7 @@ int	main()
 		str = get_next_line(fd);
 		i++;
 	}
+	printf("fin");
 	return (0);
 }
 /*
