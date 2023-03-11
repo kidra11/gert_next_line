@@ -6,37 +6,11 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:42:39 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/10 19:24:19 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/11 16:57:01 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	char	*str;
-	int		l;
-	int		i;
-	int		k;
-
-	if (s1 == NULL)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (NULL);
-	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
-	if (!str)
-		return (NULL);
-	l = 0;
-	i = 0;
-	k = 0;
-	while (s1[i])
-		str[l++] = s1[i++];
-	while (s2[k])
-		str[l++] = s2[k++];
-	str[l] = '\0';
-	free(s1);
-	return (str);
-}
 
 int	find_end(char *s)
 {
@@ -45,7 +19,7 @@ int	find_end(char *s)
 	i = 0;
 	if (!s)
 		return (0);
-	while (s[i])
+	while (s && s[i])
 	{
 		if (s[i] == '\n')
 			return (1);
@@ -59,7 +33,7 @@ char	*copy_line(char *stat)
 	char	*line;
 	int		i;
 
-	if (!stat)
+	if (!stat || !ft_strlen(stat))
 		return (NULL);
 	i = 0;
 	while (stat[i] && stat[i] != '\n')
@@ -78,19 +52,52 @@ char	*copy_line(char *stat)
 	return (line);
 }
 
+char	*new_line(char *stat)
+{
+	int		i;
+	//int		j;
+	char	*str;
+
+	i = 0;
+	if (!stat)
+		return (NULL);
+	while (stat[i] && stat[i] != '\n')
+		i++;
+	if (stat[i] == '\n')
+		i++;
+	//if (!stat[i])
+	//{
+	//	free(stat);
+	//	stat = NULL;
+	//	return (NULL);
+	//}
+	str = ft_strdup(stat + i);
+	free(stat);
+	return (str);
+	/*
+	str = (char *)malloc(sizeof(char) * (ft_strlen(stat) - i + 1));
+	if (!str)
+		return (NULL);
+	i++;
+	j = 0;
+	while (stat[i])
+		str[j++] = stat[i++];
+	str[j] = '\0';
+	free(stat);
+	return (str);*/
+}
+
 char	*get_next_line(int fd)
 {
-	ssize_t		stock;
-	static char	*next = NULL;
-	char		*stat;
-	char		*line;
-	char		*buf;
+	int			stock;
+	static char		*stat = NULL;
+	char			*buf;
 
-	if (next)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
-		stat = ft_strdup(next);
-		free(next);
-		next = NULL;
+		if (stat)
+			free(stat);
+		return (stat = NULL, NULL);
 	}
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
@@ -101,36 +108,26 @@ char	*get_next_line(int fd)
 		stock = read(fd, buf, BUFFER_SIZE);
 		buf[stock] = '\0';
 		stat = ft_strjoin(stat, buf);
-		printf("%s", stat);
 	}
 	free(buf);
-	line = copy_line(stat);
-	stock = ft_strlen(line);
-	next = (char *) malloc(sizeof(char) * ((ft_strlen(stat) - stock) + 1));
-	if (!next)
-		return (NULL);
-	stock = -1;
-	while (stat[++stock])
-		next[stock] = stat[ft_strlen(line) + stock];
-	if (ft_strlen(next) == 0 && next)
-	{
-		free(next);
-		next = NULL;
-	}
-	return (line);
+	buf = copy_line(stat);
+	stat = new_line(stat);
+	return (buf);
 }
-
+/*
 #include <stdio.h>
-int	main()
-{
-	int	fd;
-	char	*str;
-	int	i = 0;
 
+int	main(void)
+{
+	int		fd;
+	char	*str;
+	int		i;
+
+	i = 0;
 	printf("debut : \n");
-	fd = open("text", O_RDONLY);
+	fd = open("empty", O_RDONLY);
 	str = get_next_line(fd);
-	while (str && i < 10)
+	while (str)
 	{
 		printf("main : %s", str);
 		free(str);
@@ -139,4 +136,4 @@ int	main()
 	}
 	printf("fin");
 	return (0);
-}
+}*/
