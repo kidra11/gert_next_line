@@ -6,7 +6,7 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:43:47 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/11 16:51:27 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/14 18:35:14 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ char	*ft_strdup(char *s)
 	int		i;
 	char	*l;
 
+	printf("\n*~ %s ~*\n", s);
 	if (!s || !ft_strlen(s))
 		return (NULL);
 	i = 0;
@@ -49,8 +50,12 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 	int		k;
 
+	// if (!s1 && !s2)
+		// return (NULL);
 	if (!s1)
 		return (ft_strdup(s2));
+	// else if (!s2)
+		// return (ft_strdup(s1));
 	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (!str)
 		return (NULL);

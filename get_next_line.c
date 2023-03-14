@@ -6,7 +6,7 @@
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:42:39 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/11 16:57:01 by nsion            ###   ########.fr       */
+/*   Updated: 2023/03/14 20:35:47 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ int	find_end(char *s)
 		return (0);
 	while (s && s[i])
 	{
-		if (s[i] == '\n')
+		if (s[i] == '\n' || s[i] == '\0')
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-char	*copy_line(char *stat)
+char	*copy_line(char *stat, char *buf)
 {
 	char	*line;
 	int		i;
@@ -43,53 +43,46 @@ char	*copy_line(char *stat)
 	line = (char *) malloc(sizeof(char) * (i + 1));
 	if (!line)
 		return (NULL);
-	i = -1;
-	while (stat[++i] != '\n' && stat[i])
+	i = 0;
+	while (stat[i] != '\n' && stat[i])
+	{
 		line[i] = stat[i];
+		i++;
+	}
 	if (stat[i] == '\n')
 		line[i++] = '\n';
 	line[i] = '\0';
+	if (buf)
+		free(buf);
 	return (line);
 }
 
 char	*new_line(char *stat)
 {
 	int		i;
-	//int		j;
 	char	*str;
 
 	i = 0;
 	if (!stat)
+	{
+		// free(stat);
+		// stat = NULL;
 		return (NULL);
+	}
 	while (stat[i] && stat[i] != '\n')
 		i++;
 	if (stat[i] == '\n')
 		i++;
-	//if (!stat[i])
-	//{
-	//	free(stat);
-	//	stat = NULL;
-	//	return (NULL);
-	//}
 	str = ft_strdup(stat + i);
-	free(stat);
+	printf("\n*~ %s ~*\n", str);
+	if (stat)
+		free(stat);
 	return (str);
-	/*
-	str = (char *)malloc(sizeof(char) * (ft_strlen(stat) - i + 1));
-	if (!str)
-		return (NULL);
-	i++;
-	j = 0;
-	while (stat[i])
-		str[j++] = stat[i++];
-	str[j] = '\0';
-	free(stat);
-	return (str);*/
 }
 
 char	*get_next_line(int fd)
 {
-	int			stock;
+	int				stock;
 	static char		*stat = NULL;
 	char			*buf;
 
@@ -109,12 +102,19 @@ char	*get_next_line(int fd)
 		buf[stock] = '\0';
 		stat = ft_strjoin(stat, buf);
 	}
-	free(buf);
-	buf = copy_line(stat);
+	//printf(" sat :%s\n", stat);
+	// if (buf)
+	// free(buf);
+//		printf("lalala\n");
+	// buf = NULL;
+//	printf("buf_free%s\n", buf);
+	buf = copy_line(stat, buf);
+//	printf("buf_copy%s\n", buf);
 	stat = new_line(stat);
 	return (buf);
 }
-/*
+
+
 #include <stdio.h>
 
 int	main(void)
@@ -125,7 +125,7 @@ int	main(void)
 
 	i = 0;
 	printf("debut : \n");
-	fd = open("empty", O_RDONLY);
+	fd = open("text", O_RDONLY);
 	str = get_next_line(fd);
 	while (str)
 	{
@@ -136,4 +136,4 @@ int	main(void)
 	}
 	printf("fin");
 	return (0);
-}*/
+}
