@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nsion <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/27 19:42:39 by nsion             #+#    #+#             */
-/*   Updated: 2023/03/16 16:30:51 by nsion            ###   ########.fr       */
+/*   Created: 2023/03/16 16:32:49 by nsion             #+#    #+#             */
+/*   Updated: 2023/03/16 16:34:40 by nsion            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	find_end(char *s)
 {
@@ -100,17 +100,17 @@ char	*reader(int fd, char *stat)
 char	*get_next_line(int fd)
 {
 	char			*line;
-	static char		*stat = NULL;
+	static char		*stat[1000];
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
-		if (stat)
-			free(stat);
-		return (stat = NULL, NULL);
+		if (stat[fd])
+			free(stat[fd]);
+		return (stat[fd] = NULL, NULL);
 	}
-	stat = reader(fd, stat);
-	line = copy_line(stat);
-	stat = new_line(stat);
+	stat[fd] = reader(fd, stat[fd]);
+	line = copy_line(stat[fd]);
+	stat[fd] = new_line(stat[fd]);
 	return (line);
 }
 
